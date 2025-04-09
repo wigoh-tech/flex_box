@@ -1,92 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css">
-    <title>Task List & Profile</title>
- 
-  </head>
-  <body>
-    <article class="container">
-      <header>Task List</header>
 
-      <!-- section one -->
-      <section class="task-list">
-        <article class="task">
-          <h3>Task 1</h3>
-          <p>Complete HTML + CSS exercise.</p>
-        </article>
-        <article class="task">
-          <h3>Task 2</h3>
-          <p>Build a responsive layout.</p>
-        </article>
-        <article class="task">
-          <h3>Task 3</h3>
-          <p>Use Flexbox for alignment.</p>
-        </article>
-      </section>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css">
+  <title>Task List & Profile</title>
 
-      <header>Personal Profile</header>
+</head>
 
-      <!-- section two -->
-      <section class="profile">
-        <img src="A4 - 5.jpg" alt="Profile Picture" />
-        <h2>Sanjay N</h2>
-        <p>Developer - 1 | Passionate about UI/UX.</p>
-        <a href="#">Contact Me</a>
-      </section>
+<body>
+  <article class="container">
+    <header>Task List</header>
 
-      <!-- section three -->
-      <section class="task-controls">
-        <div class="controls">
-          <button onclick="addNewTask()">Add Task</button>
-          <input type="text" id="deleteInput" placeholder="Enter task title to delete..." />
-          <button onclick="deleteTask()">Delete Task</button>
-        </div>
-      </section>
-    </article>
+    <!-- section one -->
+    <section class="task-list">
+      <article class="task">
+        <h3>Task 1</h3>
+        <p>Complete HTML + CSS exercise.</p>
+      </article>
+      <article class="task">
+        <h3>Task 2</h3>
+        <p>Build a responsive layout.</p>
+      </article>
+      <article class="task">
+        <h3>Task 3</h3>
+        <p>Use Flexbox for alignment.</p>
+      </article>
 
-    <section>
-      <footer>&copy; 2025 Sanjay N. All Rights Reserved.</footer>
+
+
+    </section>
+    <header>Personal Profile</header>
+    <!-- section two -->
+    <section class="profile">
+      <img src="A4 - 5.jpg" alt="Profile Picture" />
+      <h2>Sanjay N</h2>
+      <p>Developer - 1 | Passionate about UI/UX.</p>
+      <a href="#">Contact Me</a>
     </section>
 
-    <script>
-      let taskCounter = 4; 
 
-      function addNewTask() {
-        const taskList = document.querySelector('.task-list');
+    <!-- section three -->
+    <section class="TaskCollecion">
+      <article>
+        <ul id="taskList"></ul>
+      </article>
+    </section>
 
-        const newTask = document.createElement('article');
-        newTask.classList.add('task');
-        newTask.innerHTML = `
-          <h3>Task ${taskCounter}</h3>
-          <p>This is dynamically added Task ${taskCounter}.</p>
-        `;
+    <!-- section four  -->
+    <section class="task-controls">
+      <div class="controls">
+        <button onclick="addNewTask()">Add Task</button>
+        <input type="text" id="taskInput" placeholder="Enter task title to delete..." />
+        <button onclick="removeTask()">Delete Task</button>
+      </div>
+    </section>
+  </article>
 
-        taskList.appendChild(newTask);
-        taskCounter++;
+
+
+  <section>
+    <footer>&copy; 2025 Sanjay N. All Rights Reserved.</footer>
+  </section>
+
+  <script>
+    const input = document.getElementById('taskInput');
+    const list = document.getElementById('taskList');
+
+
+    window.onload = function () {
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      tasks.forEach(task => addTaskToDOM(task));
+    };
+
+    function addNewTask() {
+      const task = input.value.trim();
+      if (task) {
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        tasks.push(task);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        addTaskToDOM(task);
+        input.value = '';
+      } else {
+        alert("Please enter a task.");
       }
+    }
 
-      function deleteTask() {
-        const input = document.getElementById('deleteInput').value.trim().toLowerCase();
-        const tasks = document.querySelectorAll('.task');
-
-        let found = false;
-        tasks.forEach((task) => {
-          const title = task.querySelector('h3').textContent.toLowerCase();
-          if (title === input) {
-            task.remove();
-            found = true;
-          }
-        });
-
-        if (!found && input !== '') {
-          alert(`No task found with title: "${input}"`);
-        }
-
-        document.getElementById('deleteInput').value = '';
+    function removeTask() {
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      if (tasks.length > 0) {
+        tasks.pop();
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        list.removeChild(list.lastChild);
+      } else {
+        alert("No tasks to remove.");
       }
-    </script>
-  </body>
+    }
+
+    function addTaskToDOM(task) {
+      const li = document.createElement('li');
+      li.textContent = task;
+      list.appendChild(li);
+    }
+  </script>
+
+</body>
+
 </html>
