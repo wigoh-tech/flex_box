@@ -1,19 +1,19 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <title>Task List & Profile</title>
-
 </head>
 
 <body>
   <article class="container">
     <header>Task List</header>
 
-    <!-- section one -->
     <section class="task-list">
       <article class="task">
         <h3>Task 1</h3>
@@ -27,12 +27,9 @@
         <h3>Task 3</h3>
         <p>Use Flexbox for alignment.</p>
       </article>
-
-
-
     </section>
+
     <header>Personal Profile</header>
-    <!-- section two -->
     <section class="profile">
       <img src="A4 - 5.jpg" alt="Profile Picture" />
       <h2>Sanjay N</h2>
@@ -40,15 +37,18 @@
       <a href="#">Contact Me</a>
     </section>
 
+    <!-- Section showing tasks from backend -->
+    <article class="backend-tasks">
+      <header>📦 Tasks From Backend</header>
+      <ul id="backendTaskList"></ul>
+    </article>
 
-    <!-- section three -->
     <section class="TaskCollecion">
       <article>
         <ul id="taskList"></ul>
       </article>
     </section>
 
-    <!-- section four  -->
     <section class="task-controls">
       <div class="controls">
         <button onclick="addNewTask()">Add Task</button>
@@ -56,21 +56,32 @@
         <button onclick="removeTask()">Delete Task</button>
       </div>
     </section>
+
+    <footer>&copy; 2025 Sanjay N. All Rights Reserved.</footer>
   </article>
-  <section>
-  <footer>&copy; 2025 Sanjay N. All Rights Reserved.</footer>
-</section>
-
-
 
   <script>
     const input = document.getElementById('taskInput');
     const list = document.getElementById('taskList');
 
-
+    // Load tasks from localStorage or fetch from backend
     window.onload = function () {
-      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-      tasks.forEach(task => addTaskToDOM(task));
+      let tasks = JSON.parse(localStorage.getItem('tasks'));
+
+      if (!tasks || tasks.length === 0) {
+        // Fetch from backend only once
+        fetch('http://localhost:3000/tasks')
+          .then(res => res.json())
+          .then(data => {
+            localStorage.setItem('tasks', JSON.stringify(data));
+            data.forEach(task => addTaskToDOM(task));
+          })
+          .catch(err => {
+            console.error('Failed to fetch backend tasks:', err);
+          });
+      } else {
+        tasks.forEach(task => addTaskToDOM(task));
+      }
     };
 
     function addNewTask() {
@@ -102,11 +113,24 @@
       li.textContent = task;
       list.appendChild(li);
     }
-  </script>
-    
 
+    // Fetch and show tasks from backend separately
+    fetch('http://localhost:3000/tasks')
+      .then(res => res.json())
+      .then(tasks => {
+        const backendList = document.getElementById('backendTaskList');
+        tasks.forEach(task => {
+          const li = document.createElement('li');
+          li.textContent = task;
+          backendList.appendChild(li);
+        });
+      })
+      .catch(err => {
+        console.error('Failed to fetch backend tasks:', err);
+      });
+  </script>
 </body>
 
-      
-   
 </html>
+
+
